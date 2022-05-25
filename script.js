@@ -270,3 +270,45 @@ whereAmI(52.508, 13.381);
 // whereAmI(19.037, 72.873);
 // whereAmI(-33.933, 18.474);
 */
+
+// ---------Creating promises -----------
+const lotteryPromis  = new Promise(function(resolve, reject){
+
+  console.log('Paisa hi paisa hoga');
+
+  setTimeout(() => {
+    if (Math.random() >= 0.5 ){
+      resolve('21 mai paisa double $$')
+    } else {
+      reject(new Error('Laxmi Chit Fund tha'))
+    }
+  }, 2000);
+})
+
+lotteryPromis.then(res => console.log(res)).catch(err => console.error(err))
+
+console.log('paisa');
+
+setTimeout(() => {
+  console.log('Raju bhai is our saviour')
+}, 1000)
+
+// Promisifying set timeout
+const wait = function (seconds) {
+  return new Promise(resolve => setTimeout(resolve, seconds * 1000))
+}
+
+wait(1)
+  .then(() => {
+    console.log('1 sec Passed')
+    return wait(1)
+  }).then(() => {
+    console.log('2 sec Passed')
+    return wait(1)
+  }).then(() => {
+    console.log('3 sec Passed')
+    return wait(1)
+  })
+
+Promise.resolve('abc').then(x => console.log(x));
+Promise.reject(new Error('Problem with abc')).catch(x => console.error(x));

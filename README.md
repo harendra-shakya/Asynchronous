@@ -1,4 +1,4 @@
+Made a mini-project using AJAX calls, promises and rest countries API.
+
 # Asynchronous
 Currently learning this :)
-
-Learining about AJAX calls, promises, how asynchronous js works.

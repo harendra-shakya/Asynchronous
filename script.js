@@ -30,10 +30,6 @@ const renderError = function(msg) {
 }
 
 
-
-
-
-
 ///////////////////////////////////////
 /*
 const getCountryAndNeighbour = function (country){
@@ -90,7 +86,6 @@ getCountryAndNeighbour('usa');
 // }
 
 
-
 // const getCountryData = function (country) {
 //   // country 1
 //   fetch(`https://restcountries.com/v3.1/name/${country}`)
@@ -128,29 +123,6 @@ getCountryAndNeighbour('usa');
     
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // btn.addEventListener('click', function() {
 //   getCountryData('usa');
 // })
@@ -170,34 +142,31 @@ const getJSON = function (url, errMsg= 'Something went wrong') {
 }
 
 
-const getCountryData = function (country) {
-  // country 1
-  getJSON(`https://restcountries.com/v3.1/name/${country}`, 'Country not found')
-  .then(data => {
-    renderCountry(data[0])
-    console.log(data[0])
+// const getCountryData = function (country) {
+//   // country 1
+//   getJSON(`https://restcountries.com/v3.1/name/${country}`, 'Country not found')
+//   .then(data => {
+//     renderCountry(data[0])
+//     console.log(data[0])
 
-    // country 2
-    const neighbours = data[0].borders;
-    console.log('neighbour', neighbours)
-    if(!neighbours) 
-      throw new Error('No neighbour found');
+//     // country 2
+//     const neighbours = data[0].borders;
+//     console.log('neighbour', neighbours)
+//     if(!neighbours) 
+//       throw new Error('No neighbour found');
 
-    const neighbour = neighbours[0]
+//     const neighbour = neighbours[0]
 
-    return getJSON(`https://restcountries.com/v3.1/alpha/${neighbour}`, 'Country not found')
-    })
-    .then(data => renderCountry(data[0], 'neighbour'))
-    .catch(err => {
-      renderError(`Something went wrong. ${err.message} Try again!`)
+//     return getJSON(`https://restcountries.com/v3.1/alpha/${neighbour}`, 'Country not found')
+//     })
+//     .then(data => renderCountry(data[0], 'neighbour'))
+//     .catch(err => {
+//       renderError(`Something went wrong. ${err.message} Try again!`)
       
-      console.error(err)
-    })
-    .finally(() => countriesContainer.style.opacity = 1)
-      
-    
-}
-
+//       console.error(err)
+//     })
+//     .finally(() => countriesContainer.style.opacity = 1)
+// }
 
 /*
 btn.addEventListener('click', function() {
@@ -270,43 +239,78 @@ whereAmI(52.508, 13.381);
 */
 
 // ---------Creating promises -----------
-const lotteryPromis  = new Promise(function(resolve, reject){
+// const lotteryPromis  = new Promise(function(resolve, reject){
 
-  console.log('Paisa hi paisa hoga');
+//   console.log('Paisa hi paisa hoga');
 
-  setTimeout(() => {
-    if (Math.random() >= 0.5 ){
-      resolve('21 mai paisa double $$')
-    } else {
-      reject(new Error('Laxmi Chit Fund tha'))
-    }
-  }, 2000);
-})
+//   setTimeout(() => {
+//     if (Math.random() >= 0.5 ){
+//       resolve('21 mai paisa double $$')
+//     } else {
+//       reject(new Error('Laxmi Chit Fund tha'))
+//     }
+//   }, 2000);
+// })
 
-lotteryPromis.then(res => console.log(res)).catch(err => console.error(err))
+// lotteryPromis.then(res => console.log(res)).catch(err => console.error(err))
 
-console.log('paisa');
+// console.log('paisa');
 
-setTimeout(() => {
-  console.log('Raju bhai is our saviour')
-}, 1000)
+// setTimeout(() => {
+//   console.log('Raju bhai is our saviour')
+// }, 1000)
 
-// Promisifying set timeout
-const wait = function (seconds) {
-  return new Promise(resolve => setTimeout(resolve, seconds * 1000))
+// // Promisifying set timeout
+// const wait = function (seconds) {
+//   return new Promise(resolve => setTimeout(resolve, seconds * 1000))
+// }
+
+// wait(1)
+//   .then(() => {
+//     console.log('1 sec Passed')
+//     return wait(1)
+//   }).then(() => {
+//     console.log('2 sec Passed')
+//     return wait(1)
+//   }).then(() => {
+//     console.log('3 sec Passed')
+//     return wait(1)
+//   })
+
+// Promise.resolve('abc').then(x => console.log(x));
+// Promise.reject(new Error('Problem with abc')).catch(x => console.error(x));
+
+// -------Your location -------
+const getPosition = function() {
+  return new Promise(function(resolve, reject) {
+    // navigator.geolocation.getCurrentPosition(position => resolve(position), err => reject(new Error('Couldn\'t get your location')))
+    navigator.geolocation.getCurrentPosition(resolve, reject)
+  })
 }
 
-wait(1)
-  .then(() => {
-    console.log('1 sec Passed')
-    return wait(1)
-  }).then(() => {
-    console.log('2 sec Passed')
-    return wait(1)
-  }).then(() => {
-    console.log('3 sec Passed')
-    return wait(1)
-  })
+getPosition().then(res => console.log(res)).catch(err => console.error(err));
 
-Promise.resolve('abc').then(x => console.log(x));
-Promise.reject(new Error('Problem with abc')).catch(x => console.error(x));
+const whereAmI = function (lat, lng) {
+  getPosition().then(pos => {
+    const {latitude: lat, longitude: lng} = pos.coords
+
+    return getJSON(`https://geocode.xyz/${lat},${lng}?geoit=json`, 'Could not found')
+  })
+  .then(data => {
+    console.log(`You are in ${data.city}, ${data.country}`)
+    return getJSON(`https://restcountries.com/v3.1/name/${data.country}`, 'Could not found')
+  })
+  .then(data => {
+    console.log(data[0])
+    renderCountry(data[0])
+    // countriesContainer.style.opacity = 1;
+})
+  .catch(err => {
+    renderError(` Something went wrong. Place not found`)
+
+    console.error(err)
+  })
+  .finally(() => countriesContainer.style.opacity = 1)
+};
+
+btn.addEventListener('click', whereAmI)
